@@ -1,27 +1,27 @@
-Feature: Manage WordPress transient cache
+Feature: Manage FinPress transient cache
 
   Scenario: Transient CRUD
     Given a WP install
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I run `wp transient set foo bar`
+    When I run `fp transient set foo bar`
     Then STDOUT should be:
       """
       Success: Transient added.
       """
 
-    When I run `wp transient get foo`
+    When I run `fp transient get foo`
     Then STDOUT should be:
       """
       bar
       """
 
-    When I run `wp transient delete foo`
+    When I run `fp transient delete foo`
     Then STDOUT should be:
       """
       Success: Transient deleted.
@@ -29,27 +29,27 @@ Feature: Manage WordPress transient cache
 
   Scenario: Network transient CRUD
     Given a WP multisite install
-    And I run `wp site create --slug=foo`
+    And I run `fp site create --slug=foo`
 
-    When I run `wp transient set foo bar --network`
+    When I run `fp transient set foo bar --network`
     Then STDOUT should be:
       """
       Success: Transient added.
       """
 
-    When I run `wp --url=example.com/foo transient get foo --network`
+    When I run `fp --url=example.com/foo transient get foo --network`
     Then STDOUT should be:
       """
       bar
       """
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I run `wp transient delete foo --network`
+    When I run `fp transient delete foo --network`
     Then STDOUT should be:
       """
       Success: Transient deleted.
@@ -57,69 +57,69 @@ Feature: Manage WordPress transient cache
 
   Scenario: Deleting all transients on single site
     Given a WP install
-    # We set `WP_DEVELOPMENT_MODE` to stop WordPress from automatically creating
+    # We set `WP_DEVELOPMENT_MODE` to stop FinPress from automatically creating
     # additional transients which cause some steps to fail when testing.
-    And I run `wp config set WP_DEVELOPMENT_MODE all`
+    And I run `fp config set WP_DEVELOPMENT_MODE all`
 
-    And I run `wp transient list --format=count`
+    And I run `fp transient list --format=count`
     And save STDOUT as {EXISTING_TRANSIENTS}
     And I run `expr {EXISTING_TRANSIENTS} + 2`
     And save STDOUT as {EXPECTED_TRANSIENTS}
 
-    When I try `wp transient delete`
+    When I try `fp transient delete`
     Then STDERR should be:
       """
       Error: Please specify transient key, or use --all or --expired.
       """
 
-    When I run `wp transient set foo bar`
-    And I run `wp transient set foo2 bar2 600`
-    And I run `wp transient set foo3 bar3 --network`
-    And I run `wp transient set foo4 bar4 600 --network`
+    When I run `fp transient set foo bar`
+    And I run `fp transient set foo2 bar2 600`
+    And I run `fp transient set foo3 bar3 --network`
+    And I run `fp transient set foo4 bar4 600 --network`
 
-    And I run `wp transient delete --all`
+    And I run `fp transient delete --all`
     Then STDOUT should be:
       """
       Success: {EXPECTED_TRANSIENTS} transients deleted from the database.
       """
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I try `wp transient get foo2`
+    When I try `fp transient get foo2`
     Then STDERR should be:
       """
       Warning: Transient with key "foo2" is not set.
       """
 
-    When I run `wp transient get foo3 --network`
+    When I run `fp transient get foo3 --network`
     Then STDOUT should be:
       """
       bar3
       """
 
-    When I run `wp transient get foo4 --network`
+    When I run `fp transient get foo4 --network`
     Then STDOUT should be:
       """
       bar4
       """
 
-    When I run `wp transient delete --all --network`
+    When I run `fp transient delete --all --network`
     Then STDOUT should be:
       """
       Success: 2 transients deleted from the database.
       """
 
-    When I try `wp transient get foo3 --network`
+    When I try `fp transient get foo3 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo3" is not set.
       """
 
-    When I try `wp transient get foo4 --network`
+    When I try `fp transient get foo4 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo4" is not set.
@@ -127,70 +127,70 @@ Feature: Manage WordPress transient cache
 
   Scenario: Deleting expired transients on single site
     Given a WP install
-    And I run `wp transient set foo bar 600`
-    And I run `wp transient set foo2 bar2 600`
-    And I run `wp transient set foo3 bar3 600 --network`
-    And I run `wp transient set foo4 bar4 600 --network`
+    And I run `fp transient set foo bar 600`
+    And I run `fp transient set foo2 bar2 600`
+    And I run `fp transient set foo3 bar3 600 --network`
+    And I run `fp transient set foo4 bar4 600 --network`
     # Change timeout to be in the past.
-    And I run `wp option update _transient_timeout_foo 1321009871`
-    And I run `wp option update _site_transient_timeout_foo3 1321009871`
+    And I run `fp option update _transient_timeout_foo 1321009871`
+    And I run `fp option update _site_transient_timeout_foo3 1321009871`
 
-    When I run `wp transient delete --expired`
+    When I run `fp transient delete --expired`
     Then STDOUT should be:
       """
       Success: 1 expired transient deleted from the database.
       """
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I run `wp transient get foo2`
+    When I run `fp transient get foo2`
     Then STDOUT should be:
       """
       bar2
       """
 
     # Check if option still exists as a get transient call will remove it.
-    When I run `wp option get _site_transient_foo3`
+    When I run `fp option get _site_transient_foo3`
     Then STDOUT should be:
       """
       bar3
       """
 
-    When I run `wp transient get foo4 --network`
+    When I run `fp transient get foo4 --network`
     Then STDOUT should be:
       """
       bar4
       """
 
-    When I run `wp transient delete --expired --network`
+    When I run `fp transient delete --expired --network`
     Then STDOUT should be:
       """
       Success: 1 expired transient deleted from the database.
       """
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I run `wp transient get foo2`
+    When I run `fp transient get foo2`
     Then STDOUT should be:
       """
       bar2
       """
 
-    When I try `wp transient get foo3 --network`
+    When I try `fp transient get foo3 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo3" is not set.
       """
 
-    When I run `wp transient get foo4 --network`
+    When I run `fp transient get foo4 --network`
     Then STDOUT should be:
       """
       bar4
@@ -198,94 +198,94 @@ Feature: Manage WordPress transient cache
 
   Scenario: Deleting all transients on multisite
     Given a WP multisite install
-    # We set `WP_DEVELOPMENT_MODE` to stop WordPress from automatically creating
+    # We set `WP_DEVELOPMENT_MODE` to stop FinPress from automatically creating
     # additional transients which cause some steps to fail when testing.
-    And I run `wp config set WP_DEVELOPMENT_MODE all`
-    And I run `wp site create --slug=foo`
-    And I run `wp transient list --format=count`
+    And I run `fp config set WP_DEVELOPMENT_MODE all`
+    And I run `fp site create --slug=foo`
+    And I run `fp transient list --format=count`
     And save STDOUT as {EXISTING_TRANSIENTS}
     And I run `expr {EXISTING_TRANSIENTS} + 2`
     And save STDOUT as {EXPECTED_TRANSIENTS}
 
-    When I try `wp transient delete`
+    When I try `fp transient delete`
     Then STDERR should be:
       """
       Error: Please specify transient key, or use --all or --expired.
       """
 
-    When I run `wp transient set foo bar`
-    And I run `wp transient set foo2 bar2 600`
-    And I run `wp transient set foo3 bar3 --network`
-    And I run `wp transient set foo4 bar4 600 --network`
-    And I run `wp --url=example.com/foo transient set foo5 bar5 --network`
-    And I run `wp --url=example.com/foo transient set foo6 bar6 600 --network`
-    And I run `wp transient delete --all`
+    When I run `fp transient set foo bar`
+    And I run `fp transient set foo2 bar2 600`
+    And I run `fp transient set foo3 bar3 --network`
+    And I run `fp transient set foo4 bar4 600 --network`
+    And I run `fp --url=example.com/foo transient set foo5 bar5 --network`
+    And I run `fp --url=example.com/foo transient set foo6 bar6 600 --network`
+    And I run `fp transient delete --all`
     Then STDOUT should be:
       """
       Success: {EXPECTED_TRANSIENTS} transients deleted from the database.
       """
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I try `wp transient get foo2`
+    When I try `fp transient get foo2`
     Then STDERR should be:
       """
       Warning: Transient with key "foo2" is not set.
       """
 
-    When I run `wp transient get foo3 --network`
+    When I run `fp transient get foo3 --network`
     Then STDOUT should be:
       """
       bar3
       """
 
-    When I run `wp transient get foo4 --network`
+    When I run `fp transient get foo4 --network`
     Then STDOUT should be:
       """
       bar4
       """
 
-    When I run `wp --url=example.com/foo transient get foo5 --network`
+    When I run `fp --url=example.com/foo transient get foo5 --network`
     Then STDOUT should be:
       """
       bar5
       """
 
-    When I run `wp --url=example.com/foo transient get foo6 --network`
+    When I run `fp --url=example.com/foo transient get foo6 --network`
     Then STDOUT should be:
       """
       bar6
       """
 
-    When I run `wp transient delete --all --network`
+    When I run `fp transient delete --all --network`
     Then STDOUT should be:
       """
       Success: 4 transients deleted from the database.
       """
 
-    When I try `wp transient get foo3 --network`
+    When I try `fp transient get foo3 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo3" is not set.
       """
 
-    When I try `wp transient get foo4 --network`
+    When I try `fp transient get foo4 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo4" is not set.
       """
 
-    When I try `wp --url=example.com/foo transient get foo5 --network`
+    When I try `fp --url=example.com/foo transient get foo5 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo5" is not set.
       """
 
-    When I try `wp --url=example.com/foo transient get foo6 --network`
+    When I try `fp --url=example.com/foo transient get foo6 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo6" is not set.
@@ -293,99 +293,99 @@ Feature: Manage WordPress transient cache
 
   Scenario: Deleting expired transients on multisite
     Given a WP multisite install
-    And I run `wp site create --slug=foo`
-    And I run `wp transient set foo bar 600`
-    And I run `wp transient set foo2 bar2 600`
-    And I run `wp transient set foo3 bar3 600 --network`
-    And I run `wp transient set foo4 bar4 600 --network`
-    And I run `wp --url=example.com/foo transient set foo5 bar5 600 --network`
-    And I run `wp --url=example.com/foo transient set foo6 bar6 600 --network`
+    And I run `fp site create --slug=foo`
+    And I run `fp transient set foo bar 600`
+    And I run `fp transient set foo2 bar2 600`
+    And I run `fp transient set foo3 bar3 600 --network`
+    And I run `fp transient set foo4 bar4 600 --network`
+    And I run `fp --url=example.com/foo transient set foo5 bar5 600 --network`
+    And I run `fp --url=example.com/foo transient set foo6 bar6 600 --network`
     # Change timeout to be in the past.
-    And I run `wp option update _transient_timeout_foo 1321009871`
-    And I run `wp site option update _site_transient_timeout_foo3 1321009871`
-    And I run `wp --url=example.com/foo site option update _site_transient_timeout_foo5 1321009871`
+    And I run `fp option update _transient_timeout_foo 1321009871`
+    And I run `fp site option update _site_transient_timeout_foo3 1321009871`
+    And I run `fp --url=example.com/foo site option update _site_transient_timeout_foo5 1321009871`
 
-    When I run `wp transient delete --expired`
+    When I run `fp transient delete --expired`
     Then STDOUT should be:
       """
       Success: 1 expired transient deleted from the database.
       """
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I run `wp transient get foo2`
+    When I run `fp transient get foo2`
     Then STDOUT should be:
       """
       bar2
       """
 
     # Check if option still exists as a get transient call will remove it.
-    When I run `wp site option get _site_transient_foo3`
+    When I run `fp site option get _site_transient_foo3`
     Then STDOUT should be:
       """
       bar3
       """
 
-    When I run `wp transient get foo4 --network`
+    When I run `fp transient get foo4 --network`
     Then STDOUT should be:
       """
       bar4
       """
 
     # Check if option still exists as a get transient call will remove it.
-    When I run `wp --url=example.com/foo site option get _site_transient_foo5`
+    When I run `fp --url=example.com/foo site option get _site_transient_foo5`
     Then STDOUT should be:
       """
       bar5
       """
 
-    When I run `wp --url=example.com/foo transient get foo6 --network`
+    When I run `fp --url=example.com/foo transient get foo6 --network`
     Then STDOUT should be:
       """
       bar6
       """
 
-    When I run `wp transient delete --expired --network`
+    When I run `fp transient delete --expired --network`
     Then STDOUT should be:
       """
       Success: 2 expired transients deleted from the database.
       """
 
-    When I try `wp transient get foo`
+    When I try `fp transient get foo`
     Then STDERR should be:
       """
       Warning: Transient with key "foo" is not set.
       """
 
-    When I run `wp transient get foo2`
+    When I run `fp transient get foo2`
     Then STDOUT should be:
       """
       bar2
       """
 
-    When I try `wp transient get foo3 --network`
+    When I try `fp transient get foo3 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo3" is not set.
       """
 
-    When I run `wp transient get foo4 --network`
+    When I run `fp transient get foo4 --network`
     Then STDOUT should be:
       """
       bar4
       """
 
-    When I try `wp --url=example.com/foo transient get foo5 --network`
+    When I try `fp --url=example.com/foo transient get foo5 --network`
     Then STDERR should be:
       """
       Warning: Transient with key "foo5" is not set.
       """
 
-    When I run `wp --url=example.com/foo transient get foo6 --network`
+    When I run `fp --url=example.com/foo transient get foo6 --network`
     Then STDOUT should be:
       """
       bar6
@@ -393,18 +393,18 @@ Feature: Manage WordPress transient cache
 
   Scenario: List transients on single site
     Given a WP install
-    And I run `wp transient set foo bar`
-    And I run `wp transient set foo2 bar2 610`
-    And I run `wp option update _transient_timeout_foo2 95649119999`
-    And I run `wp transient set foo3 bar3 300`
-    And I run `wp option update _transient_timeout_foo3 1321009871`
-    And I run `wp transient set foo4 bar4 --network`
-    And I run `wp transient set foo5 bar5 610 --network`
-    And I run `wp option update _site_transient_timeout_foo5 95649119999`
-    And I run `wp transient set foo6 bar6 300 --network`
-    And I run `wp option update _site_transient_timeout_foo6 1321009871`
+    And I run `fp transient set foo bar`
+    And I run `fp transient set foo2 bar2 610`
+    And I run `fp option update _transient_timeout_foo2 95649119999`
+    And I run `fp transient set foo3 bar3 300`
+    And I run `fp option update _transient_timeout_foo3 1321009871`
+    And I run `fp transient set foo4 bar4 --network`
+    And I run `fp transient set foo5 bar5 610 --network`
+    And I run `fp option update _site_transient_timeout_foo5 95649119999`
+    And I run `fp transient set foo6 bar6 300 --network`
+    And I run `fp option update _site_transient_timeout_foo6 1321009871`
 
-    When I run `wp transient list --format=csv`
+    When I run `fp transient list --format=csv`
     Then STDOUT should contain:
       """
       foo,bar,false
@@ -418,7 +418,7 @@ Feature: Manage WordPress transient cache
       foo3,bar3,1321009871
       """
 
-    When I run `wp transient list --format=csv --human-readable`
+    When I run `fp transient list --format=csv --human-readable`
     Then STDOUT should contain:
       """
       foo,bar,"never expires"
@@ -432,7 +432,7 @@ Feature: Manage WordPress transient cache
       foo2,bar2,95649119999
       """
 
-    When I run `wp transient list --network --format=csv`
+    When I run `fp transient list --network --format=csv`
     Then STDOUT should contain:
       """
       foo4,bar4,false
@@ -448,21 +448,21 @@ Feature: Manage WordPress transient cache
 
   Scenario: List transients on multisite
     Given a WP multisite install
-    # We set `WP_DEVELOPMENT_MODE` to stop WordPress from automatically creating
+    # We set `WP_DEVELOPMENT_MODE` to stop FinPress from automatically creating
     # additional transients which cause some steps to fail when testing.
-    And I run `wp config set WP_DEVELOPMENT_MODE all`
-    And I run `wp transient set foo bar`
-    And I run `wp transient set foo2 bar2 610`
-    And I run `wp option update _transient_timeout_foo2 95649119999`
-    And I run `wp transient set foo3 bar3 300`
-    And I run `wp option update _transient_timeout_foo3 1321009871`
-    And I run `wp transient set foo4 bar4 --network`
-    And I run `wp transient set foo5 bar5 610 --network`
-    And I run `wp site option update _site_transient_timeout_foo5 95649119999`
-    And I run `wp transient set foo6 bar6 300 --network`
-    And I run `wp site option update _site_transient_timeout_foo6 1321009871`
+    And I run `fp config set WP_DEVELOPMENT_MODE all`
+    And I run `fp transient set foo bar`
+    And I run `fp transient set foo2 bar2 610`
+    And I run `fp option update _transient_timeout_foo2 95649119999`
+    And I run `fp transient set foo3 bar3 300`
+    And I run `fp option update _transient_timeout_foo3 1321009871`
+    And I run `fp transient set foo4 bar4 --network`
+    And I run `fp transient set foo5 bar5 610 --network`
+    And I run `fp site option update _site_transient_timeout_foo5 95649119999`
+    And I run `fp transient set foo6 bar6 300 --network`
+    And I run `fp site option update _site_transient_timeout_foo6 1321009871`
 
-    When I run `wp transient list --format=csv`
+    When I run `fp transient list --format=csv`
     Then STDOUT should contain:
       """
       foo,bar,false
@@ -476,7 +476,7 @@ Feature: Manage WordPress transient cache
       foo3,bar3,1321009871
       """
 
-    When I run `wp transient list --format=csv --human-readable`
+    When I run `fp transient list --format=csv --human-readable`
     Then STDOUT should contain:
       """
       foo,bar,"never expires"
@@ -490,7 +490,7 @@ Feature: Manage WordPress transient cache
       foo2,bar2,95649119999
       """
 
-    When I run `wp transient list --network --format=csv`
+    When I run `fp transient list --network --format=csv`
     Then STDOUT should contain:
       """
       foo4,bar4,false
@@ -506,36 +506,20 @@ Feature: Manage WordPress transient cache
 
   Scenario: List transients with search and exclude pattern
     Given a WP install
-    And I run `wp transient set foo bar`
-    And I run `wp transient set foo2 bar2`
-    And I run `wp transient set foo3 bar3`
-    And I run `wp transient set foo4 bar4 --network`
-    And I run `wp transient set foo5 bar5 --network`
+    And I run `fp transient set foo bar`
+    And I run `fp transient set foo2 bar2`
+    And I run `fp transient set foo3 bar3`
+    And I run `fp transient set foo4 bar4 --network`
+    And I run `fp transient set foo5 bar5 --network`
 
-    When I run `wp transient list --format=csv --fields=name --search="foo"`
+    When I run `fp transient list --format=csv --fields=name --search="foo"`
     Then STDOUT should be:
       """
       name
       foo
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="foo*"`
-    Then STDOUT should be:
-      """
-      name
-      foo
-      foo2
-      foo3
-      """
-
-    When I run `wp transient list --format=csv --fields=name --search="*oo"`
-    Then STDOUT should be:
-      """
-      name
-      foo
-      """
-
-    When I run `wp transient list --format=csv --fields=name --search="*oo*"`
+    When I run `fp transient list --format=csv --fields=name --search="foo*"`
     Then STDOUT should be:
       """
       name
@@ -544,7 +528,23 @@ Feature: Manage WordPress transient cache
       foo3
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="*oo?"`
+    When I run `fp transient list --format=csv --fields=name --search="*oo"`
+    Then STDOUT should be:
+      """
+      name
+      foo
+      """
+
+    When I run `fp transient list --format=csv --fields=name --search="*oo*"`
+    Then STDOUT should be:
+      """
+      name
+      foo
+      foo2
+      foo3
+      """
+
+    When I run `fp transient list --format=csv --fields=name --search="*oo?"`
     Then STDOUT should be:
       """
       name
@@ -552,7 +552,7 @@ Feature: Manage WordPress transient cache
       foo3
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="foo?"`
+    When I run `fp transient list --format=csv --fields=name --search="foo?"`
     Then STDOUT should be:
       """
       name
@@ -560,13 +560,13 @@ Feature: Manage WordPress transient cache
       foo3
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="doesnotexist*"`
+    When I run `fp transient list --format=csv --fields=name --search="doesnotexist*"`
     Then STDOUT should be:
       """
       name
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="foo*" --exclude="foo2"`
+    When I run `fp transient list --format=csv --fields=name --search="foo*" --exclude="foo2"`
     Then STDOUT should be:
       """
       name
@@ -574,7 +574,7 @@ Feature: Manage WordPress transient cache
       foo3
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="foo*" --exclude="*3"`
+    When I run `fp transient list --format=csv --fields=name --search="foo*" --exclude="*3"`
     Then STDOUT should be:
       """
       name
@@ -582,14 +582,14 @@ Feature: Manage WordPress transient cache
       foo2
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="foo*" --exclude="foo?"`
+    When I run `fp transient list --format=csv --fields=name --search="foo*" --exclude="foo?"`
     Then STDOUT should be:
       """
       name
       foo
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="foo*" --network`
+    When I run `fp transient list --format=csv --fields=name --search="foo*" --network`
     Then STDOUT should be:
       """
       name
@@ -597,7 +597,7 @@ Feature: Manage WordPress transient cache
       foo5
       """
 
-    When I run `wp transient list --format=csv --fields=name --search="foo*" --exclude="foo5" --network`
+    When I run `fp transient list --format=csv --fields=name --search="foo*" --exclude="foo5" --network`
     Then STDOUT should be:
       """
       name

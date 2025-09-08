@@ -1,18 +1,18 @@
-Feature: Managed the WordPress object cache
+Feature: Managed the FinPress object cache
 
   Scenario: Default group is 'default'
     Given a WP install
-    And a wp-content/mu-plugins/test-harness.php file:
+    And a fp-content/mu-plugins/test-harness.php file:
       """
       <?php
       $set_foo = function(){
-        wp_cache_set( 'foo', 'bar' );
+        fp_cache_set( 'foo', 'bar' );
       };
       $set_foo_value = function() {
-        wp_cache_set( 'foo', 2 );
+        fp_cache_set( 'foo', 2 );
       };
       $log_foo_value = function() {
-        WP_CLI::log( var_export( wp_cache_get( 'foo' ), true ) );
+        WP_CLI::log( var_export( fp_cache_get( 'foo' ), true ) );
       };
       WP_CLI::add_hook( 'before_invoke:cache get', $set_foo );
       WP_CLI::add_hook( 'before_invoke:cache delete', $set_foo );
@@ -23,129 +23,129 @@ Feature: Managed the WordPress object cache
       WP_CLI::add_hook( 'before_invoke:cache replace', $set_foo_value );
       """
 
-    When I run `wp cache get foo`
+    When I run `fp cache get foo`
     Then STDOUT should be:
       """
       bar
       """
 
-    When I try `wp cache get bar`
+    When I try `fp cache get bar`
     Then STDERR should be:
       """
       Error: Object with key 'bar' and group 'default' not found.
       """
 
-    When I try `wp cache get bar burrito`
+    When I try `fp cache get bar burrito`
     Then STDERR should be:
       """
       Error: Object with key 'bar' and group 'burrito' not found.
       """
 
-    When I run `wp cache delete foo`
+    When I run `fp cache delete foo`
     Then STDOUT should be:
       """
       Success: Object deleted.
       """
 
-    When I try `wp cache delete bar`
+    When I try `fp cache delete bar`
     Then STDERR should be:
       """
       Error: The object was not deleted.
       """
 
-    When I try `wp cache add foo bar`
+    When I try `fp cache add foo bar`
     Then STDERR should be:
       """
       Error: Could not add object 'foo' in group 'default'. Does it already exist?
       """
 
-    When I run `wp cache add bar burrito`
+    When I run `fp cache add bar burrito`
     Then STDOUT should be:
       """
       Success: Added object 'bar' in group 'default'.
       """
 
-    When I run `wp cache add bar foo burrito`
+    When I run `fp cache add bar foo burrito`
     Then STDOUT should be:
       """
       Success: Added object 'bar' in group 'burrito'.
       """
 
-    When I run `wp cache incr foo`
+    When I run `fp cache incr foo`
     Then STDOUT should be:
       """
       3
       """
 
-    When I run `wp cache incr foo 2`
+    When I run `fp cache incr foo 2`
     Then STDOUT should be:
       """
       4
       """
 
-    When I try `wp cache incr bar`
+    When I try `fp cache incr bar`
     Then STDERR should be:
       """
       Error: The value was not incremented.
       """
 
-    When I run `wp cache decr foo`
+    When I run `fp cache decr foo`
     Then STDOUT should be:
       """
       1
       """
 
-    When I run `wp cache decr foo 2`
+    When I run `fp cache decr foo 2`
     Then STDOUT should be:
       """
       0
       """
 
-    When I try `wp cache decr bar`
+    When I try `fp cache decr bar`
     Then STDERR should be:
       """
       Error: The value was not decremented.
       """
 
-    When I run `wp cache set foo bar`
+    When I run `fp cache set foo bar`
     Then STDOUT should be:
       """
       Success: Set object 'foo' in group 'default'.
       'bar'
       """
 
-    When I run `wp cache set burrito foo bar`
+    When I run `fp cache set burrito foo bar`
     Then STDOUT should be:
       """
       Success: Set object 'burrito' in group 'bar'.
       false
       """
 
-    When I run `wp cache replace foo burrito`
+    When I run `fp cache replace foo burrito`
     Then STDOUT should be:
       """
       Success: Replaced object 'foo' in group 'default'.
       """
 
-    When I try `wp cache replace bar burrito foo`
+    When I try `fp cache replace bar burrito foo`
     Then STDERR should be:
       """
       Error: Could not replace object 'bar' in group 'foo'. Does it not exist?
       """
 
-  @require-wp-6.1
+  @require-fp-6.1
   Scenario: Some cache groups cannot be cleared.
     Given a WP install
-    When I run `wp cache flush-group add_multiple`
+    When I run `fp cache flush-group add_multiple`
     Then STDOUT should be:
       """
       Success: Cache group 'add_multiple' was flushed.
       """
 
-  @require-wp-6.1
+  @require-fp-6.1
   Scenario: Some cache groups cannot be cleared.
     Given a WP install
-    And a wp-content/mu-plugins/unclearable-test-cache.php file:
+    And a fp-content/mu-plugins/unclearable-test-cache.php file:
       """php
       <?php
       class Dummy_Object_Cache extends WP_Object_Cache {
@@ -156,18 +156,18 @@ Feature: Managed the WordPress object cache
           return parent::flush_group( $group );
         }
       }
-      $GLOBALS['wp_object_cache'] = new Dummy_Object_Cache();
+      $GLOBALS['fp_object_cache'] = new Dummy_Object_Cache();
       """
-    When I try `wp cache flush-group permanent_root_cache`
+    When I try `fp cache flush-group permanent_root_cache`
     Then STDERR should be:
       """
       Error: Cache group 'permanent_root_cache' was not flushed.
       """
 
-  @less-than-wp-6.1
+  @less-than-fp-6.1
   Scenario: Some cache groups cannot be cleared.
     Given a WP install
-    And a wp-content/mu-plugins/unclearable-test-cache.php file:
+    And a fp-content/mu-plugins/unclearable-test-cache.php file:
       """php
       <?php
       class Dummy_Object_Cache extends WP_Object_Cache {
@@ -178,9 +178,9 @@ Feature: Managed the WordPress object cache
           return parent::flush_group( $group );
         }
       }
-      $GLOBALS['wp_object_cache'] = new Dummy_Object_Cache();
+      $GLOBALS['fp_object_cache'] = new Dummy_Object_Cache();
       """
-    When I try `wp cache flush-group permanent_root_cache`
+    When I try `fp cache flush-group permanent_root_cache`
     Then STDERR should be:
       """
       Error: Group flushing is not supported.
@@ -189,24 +189,24 @@ Feature: Managed the WordPress object cache
   Scenario: Flushing cache on a multisite installation
     Given a WP multisite installation
 
-    When I try `wp cache flush`
+    When I try `fp cache flush`
     Then STDERR should not contain:
       """
       Warning: Flushing the cache may affect all sites in a multisite installation, depending on the implementation of the object cache.
       """
 
-    When I try `wp cache flush --url=example.com`
+    When I try `fp cache flush --url=example.com`
     Then STDERR should contain:
       """
       Warning: Flushing the cache may affect all sites in a multisite installation, depending on the implementation of the object cache.
       """
 
-  @require-wp-6.1
+  @require-fp-6.1
   Scenario: Checking if the cache supports a feature
     Given a WP install
 
-    When I try `wp cache supports non_existing`
+    When I try `fp cache supports non_existing`
     Then the return code should be 1
 
-    When I run `wp cache supports set_multiple`
+    When I run `fp cache supports set_multiple`
     Then the return code should be 0

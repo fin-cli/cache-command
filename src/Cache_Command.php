@@ -10,20 +10,20 @@ use WP_CLI\Utils;
  * request (and is emptied at the end). Use a persistent object cache drop-in
  * to persist the object cache between requests.
  *
- * [Read the codex article](https://codex.wordpress.org/Class_Reference/WP_Object_Cache)
+ * [Read the codex article](https://codex.finpress.org/Class_Reference/WP_Object_Cache)
  * for more detail.
  *
  * ## EXAMPLES
  *
  *     # Set cache.
- *     $ wp cache set my_key my_value my_group 300
+ *     $ fp cache set my_key my_value my_group 300
  *     Success: Set object 'my_key' in group 'my_group'.
  *
  *     # Get cache.
- *     $ wp cache get my_key my_group
+ *     $ fp cache get my_key my_group
  *     my_value
  *
- * @package wp-cli
+ * @package fp-cli
  */
 class Cache_Command extends WP_CLI_Command {
 
@@ -56,7 +56,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Add cache.
-	 *     $ wp cache add my_key my_group my_value 300
+	 *     $ fp cache add my_key my_group my_value 300
 	 *     Success: Added object 'my_key' in group 'my_value'.
 	 *
 	 * @param array{string, string, string, string} $args       Positional arguments.
@@ -65,7 +65,7 @@ class Cache_Command extends WP_CLI_Command {
 	public function add( $args, $assoc_args ) {
 		list( $key, $value, $group, $expiration ) = $args;
 
-		if ( ! wp_cache_add( $key, $value, $group, (int) $expiration ) ) {
+		if ( ! fp_cache_add( $key, $value, $group, (int) $expiration ) ) {
 			WP_CLI::error( "Could not add object '$key' in group '$group'. Does it already exist?" );
 		}
 
@@ -97,7 +97,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Decrease cache value.
-	 *     $ wp cache decr my_key 2 my_group
+	 *     $ fp cache decr my_key 2 my_group
 	 *     48
 	 *
 	 * @param array{string, string, string} $args       Positional arguments.
@@ -105,7 +105,7 @@ class Cache_Command extends WP_CLI_Command {
 	 */
 	public function decr( $args, $assoc_args ) {
 		list( $key, $offset, $group ) = $args;
-		$value = wp_cache_decr( $key, (int) $offset, $group );
+		$value = fp_cache_decr( $key, (int) $offset, $group );
 
 		if ( false === $value ) {
 			WP_CLI::error( 'The value was not decremented.' );
@@ -133,7 +133,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete cache.
-	 *     $ wp cache delete my_key my_group
+	 *     $ fp cache delete my_key my_group
 	 *     Success: Object deleted.
 	 *
 	 * @param array{string, string} $args       Positional arguments.
@@ -141,7 +141,7 @@ class Cache_Command extends WP_CLI_Command {
 	 */
 	public function delete( $args, $assoc_args ) {
 		list( $key, $group ) = $args;
-		$result              = wp_cache_delete( $key, $group );
+		$result              = fp_cache_delete( $key, $group );
 
 		if ( false === $result ) {
 			WP_CLI::error( 'The object was not deleted.' );
@@ -153,7 +153,7 @@ class Cache_Command extends WP_CLI_Command {
 	/**
 	 * Flushes the object cache.
 	 *
-	 * For WordPress multisite instances using a persistent object cache,
+	 * For FinPress multisite instances using a persistent object cache,
 	 * flushing the object cache will typically flush the cache for all sites.
 	 * Beware of the performance impact when flushing the object cache in
 	 * production.
@@ -163,17 +163,17 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Flush cache.
-	 *     $ wp cache flush
+	 *     $ fp cache flush
 	 *     Success: The cache was flushed.
 	 */
 	public function flush() {
-		// TODO: Needs fixing in wp-cli/wp-cli
+		// TODO: Needs fixing in fp-cli/fp-cli
 		// @phpstan-ignore offsetAccess.nonOffsetAccessible
 		if ( WP_CLI::has_config( 'url' ) && ! empty( WP_CLI::get_config()['url'] ) && is_multisite() ) {
 			WP_CLI::warning( 'Flushing the cache may affect all sites in a multisite installation, depending on the implementation of the object cache.' );
 		}
 
-		$value = wp_cache_flush();
+		$value = fp_cache_flush();
 		if ( false === $value ) {
 			WP_CLI::error( 'The object cache could not be flushed.' );
 		}
@@ -200,7 +200,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Get cache.
-	 *     $ wp cache get my_key my_group
+	 *     $ fp cache get my_key my_group
 	 *     my_value
 	 *
 	 * @param array{string, string} $args       Positional arguments.
@@ -208,7 +208,7 @@ class Cache_Command extends WP_CLI_Command {
 	 */
 	public function get( $args, $assoc_args ) {
 		list( $key, $group ) = $args;
-		$value               = wp_cache_get( $key, $group );
+		$value               = fp_cache_get( $key, $group );
 
 		if ( false === $value ) {
 			WP_CLI::error( "Object with key '$key' and group '$group' not found." );
@@ -242,7 +242,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Increase cache value.
-	 *     $ wp cache incr my_key 2 my_group
+	 *     $ fp cache incr my_key 2 my_group
 	 *     50
 	 *
 	 * @param array{string, string, string} $args       Positional arguments.
@@ -250,7 +250,7 @@ class Cache_Command extends WP_CLI_Command {
 	 */
 	public function incr( $args, $assoc_args ) {
 		list( $key, $offset, $group ) = $args;
-		$value = wp_cache_incr( $key, (int) $offset, $group );
+		$value = fp_cache_incr( $key, (int) $offset, $group );
 
 		if ( false === $value ) {
 			WP_CLI::error( 'The value was not incremented.' );
@@ -287,7 +287,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Replace cache.
-	 *     $ wp cache replace my_key new_value my_group
+	 *     $ fp cache replace my_key new_value my_group
 	 *     Success: Replaced object 'my_key' in group 'my_group'.
 	 *
 	 * @param array{string, string, string, string} $args       Positional arguments.
@@ -295,7 +295,7 @@ class Cache_Command extends WP_CLI_Command {
 	 */
 	public function replace( $args, $assoc_args ) {
 		list( $key, $value, $group, $expiration ) = $args;
-		$result = wp_cache_replace( $key, $value, $group, (int) $expiration );
+		$result = fp_cache_replace( $key, $value, $group, (int) $expiration );
 
 		if ( false === $result ) {
 			WP_CLI::error( "Could not replace object '$key' in group '$group'. Does it not exist?" );
@@ -332,7 +332,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Set cache.
-	 *     $ wp cache set my_key my_value my_group 300
+	 *     $ fp cache set my_key my_value my_group 300
 	 *     Success: Set object 'my_key' in group 'my_group'.
 	 *
 	 * @param array{string, string, string, string} $args       Positional arguments.
@@ -340,7 +340,7 @@ class Cache_Command extends WP_CLI_Command {
 	 */
 	public function set( $args, $assoc_args ) {
 		list( $key, $value, $group, $expiration ) = $args;
-		$result = wp_cache_set( $key, $value, $group, (int) $expiration );
+		$result = fp_cache_set( $key, $value, $group, (int) $expiration );
 
 		if ( false === $result ) {
 			WP_CLI::error( "Could not add object '$key' in group '$group'." );
@@ -360,11 +360,11 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Check cache type.
-	 *     $ wp cache type
+	 *     $ fp cache type
 	 *     Default
 	 */
 	public function type() {
-		$message = WP_CLI\Utils\wp_get_cache_type();
+		$message = WP_CLI\Utils\fp_get_cache_type();
 		WP_CLI::line( $message );
 	}
 
@@ -379,12 +379,12 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Check whether is add_multiple supported.
-	 *     $ wp cache supports add_multiple
+	 *     $ fp cache supports add_multiple
 	 *     $ echo $?
 	 *     0
 	 *
 	 *     # Bash script for checking whether for support like this:
-	 *     if ! wp cache supports non_existing; then
+	 *     if ! fp cache supports non_existing; then
 	 *         echo 'non_existing is not supported'
 	 *     fi
 	 *
@@ -393,11 +393,11 @@ class Cache_Command extends WP_CLI_Command {
 	public function supports( $args ) {
 		list ( $feature ) = $args;
 
-		if ( ! function_exists( 'wp_cache_supports' ) ) {
-			WP_CLI::error( 'Checking cache features is only available in WordPress 6.1 and higher' );
+		if ( ! function_exists( 'fp_cache_supports' ) ) {
+			WP_CLI::error( 'Checking cache features is only available in FinPress 6.1 and higher' );
 		}
 
-		$supports = wp_cache_supports( $feature );
+		$supports = fp_cache_supports( $feature );
 
 		if ( $supports ) {
 			WP_CLI::halt( 0 );
@@ -416,7 +416,7 @@ class Cache_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Clear cache group.
-	 *     $ wp cache flush-group my_group
+	 *     $ fp cache flush-group my_group
 	 *     Success: Cache group 'my_group' was flushed.
 	 *
 	 * @subcommand flush-group
@@ -426,11 +426,11 @@ class Cache_Command extends WP_CLI_Command {
 	public function flush_group( $args ) {
 		list( $group ) = $args;
 
-		if ( ! function_exists( 'wp_cache_supports' ) || ! wp_cache_supports( 'flush_group' ) ) {
+		if ( ! function_exists( 'fp_cache_supports' ) || ! fp_cache_supports( 'flush_group' ) ) {
 			WP_CLI::error( 'Group flushing is not supported.' );
 		}
 
-		if ( ! wp_cache_flush_group( $group ) ) {
+		if ( ! fp_cache_flush_group( $group ) ) {
 			WP_CLI::error( "Cache group '$group' was not flushed." );
 		}
 		WP_CLI::success( "Cache group '$group' was flushed." );
@@ -471,7 +471,7 @@ class Cache_Command extends WP_CLI_Command {
 
 		$group = Utils\get_flag_value( $assoc_args, 'group' );
 
-		$value = wp_cache_get( $key, $group );
+		$value = fp_cache_get( $key, $group );
 
 		if ( false === $value ) {
 			WP_CLI::warning( "No object found for the key '$key' in group '$group'" );
@@ -585,7 +585,7 @@ class Cache_Command extends WP_CLI_Command {
 		}
 
 		/* Need to make a copy of $current_value here as it is modified by reference */
-		$old_value     = wp_cache_get( $key, $group );
+		$old_value     = fp_cache_get( $key, $group );
 		$current_value = $old_value;
 		if ( is_object( $old_value ) ) {
 			$current_value = clone $old_value;
@@ -604,7 +604,7 @@ class Cache_Command extends WP_CLI_Command {
 		if ( $patched_value === $old_value ) {
 			WP_CLI::success( "Value passed for cache key '$key' is unchanged." );
 		} else {
-			$success = wp_cache_set( $key, $patched_value, $group, (int) $expiration );
+			$success = fp_cache_set( $key, $patched_value, $group, (int) $expiration );
 			if ( $success ) {
 				WP_CLI::success( "Updated cache key '$key'." );
 			} else {

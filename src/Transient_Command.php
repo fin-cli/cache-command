@@ -8,8 +8,8 @@ use WP_CLI\Utils;
  *
  * By default, the transient cache uses the FinPress database to persist values
  * between requests. On a single site installation, values are stored in the
- * `fp_options` table. On a multisite installation, values are stored in the
- * `fp_options` or the `fp_sitemeta` table, depending on use of the `--network`
+ * `fin_options` table. On a multisite installation, values are stored in the
+ * `fin_options` or the `fin_sitemeta` table, depending on use of the `--network`
  * flag.
  *
  * When a persistent object cache drop-in is installed (e.g. Redis or Memcached),
@@ -18,27 +18,27 @@ use WP_CLI\Utils;
  * ## EXAMPLES
  *
  *     # Set transient.
- *     $ fp transient set sample_key "test data" 3600
+ *     $ fin transient set sample_key "test data" 3600
  *     Success: Transient added.
  *
  *     # Get transient.
- *     $ fp transient get sample_key
+ *     $ fin transient get sample_key
  *     test data
  *
  *     # Delete transient.
- *     $ fp transient delete sample_key
+ *     $ fin transient delete sample_key
  *     Success: Transient deleted.
  *
  *     # Delete expired transients.
- *     $ fp transient delete --expired
+ *     $ fin transient delete --expired
  *     Success: 12 expired transients deleted from the database.
  *
  *     # Delete all transients.
- *     $ fp transient delete --all
+ *     $ fin transient delete --all
  *     Success: 14 transients deleted from the database.
  *
  *     # Delete all site transients.
- *     $ fp transient delete --all --network
+ *     $ fin transient delete --all --network
  *     Success: 2 transients deleted from the database.
  */
 class Transient_Command extends WP_CLI_Command {
@@ -47,7 +47,7 @@ class Transient_Command extends WP_CLI_Command {
 	 * Gets a transient value.
 	 *
 	 * For a more complete explanation of the transient cache, including the
-	 * network|site cache, please see docs for `fp transient`.
+	 * network|site cache, please see docs for `fin transient`.
 	 *
 	 * ## OPTIONS
 	 *
@@ -72,10 +72,10 @@ class Transient_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp transient get sample_key
+	 *     $ fin transient get sample_key
 	 *     test data
 	 *
-	 *     $ fp transient get random_key
+	 *     $ fin transient get random_key
 	 *     Warning: Transient with key "random_key" is not set.
 	 *
 	 * @param array{string}         $args       Positional arguments.
@@ -101,7 +101,7 @@ class Transient_Command extends WP_CLI_Command {
 	 * `<expiration>` is the time until expiration, in seconds.
 	 *
 	 * For a more complete explanation of the transient cache, including the
-	 * network|site cache, please see docs for `fp transient`.
+	 * network|site cache, please see docs for `fin transient`.
 	 *
 	 * ## OPTIONS
 	 *
@@ -121,7 +121,7 @@ class Transient_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp transient set sample_key "test data" 3600
+	 *     $ fin transient set sample_key "test data" 3600
 	 *     Success: Transient added.
 	 *
 	 * @param array{0: string, 1: string, 2?: string} $args       Positional arguments.
@@ -144,7 +144,7 @@ class Transient_Command extends WP_CLI_Command {
 	 * Deletes a transient value.
 	 *
 	 * For a more complete explanation of the transient cache, including the
-	 * network|site cache, please see docs for `fp transient`.
+	 * network|site cache, please see docs for `fin transient`.
 	 *
 	 * ## OPTIONS
 	 *
@@ -165,27 +165,27 @@ class Transient_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete transient.
-	 *     $ fp transient delete sample_key
+	 *     $ fin transient delete sample_key
 	 *     Success: Transient deleted.
 	 *
 	 *     # Delete expired transients.
-	 *     $ fp transient delete --expired
+	 *     $ fin transient delete --expired
 	 *     Success: 12 expired transients deleted from the database.
 	 *
 	 *     # Delete expired site transients.
-	 *     $ fp transient delete --expired --network
+	 *     $ fin transient delete --expired --network
 	 *     Success: 1 expired transient deleted from the database.
 	 *
 	 *     # Delete all transients.
-	 *     $ fp transient delete --all
+	 *     $ fin transient delete --all
 	 *     Success: 14 transients deleted from the database.
 	 *
 	 *     # Delete all site transients.
-	 *     $ fp transient delete --all --network
+	 *     $ fin transient delete --all --network
 	 *     Success: 2 transients deleted from the database.
 	 *
 	 *     # Delete all transients in a multisite.
-	 *     $ fp transient delete --all --network && fp site list --field=url | xargs -n1 -I % fp --url=% transient delete --all
+	 *     $ fin transient delete --all --network && fin site list --field=url | xargs -n1 -I % fin --url=% transient delete --all
 	 *
 	 * @param array{string}                                     $args       Positional arguments.
 	 * @param array{network?: bool, all?: bool, expired?: bool} $assoc_args Associative arguments.
@@ -230,15 +230,15 @@ class Transient_Command extends WP_CLI_Command {
 	 * database.
 	 *
 	 * For a more complete explanation of the transient cache, including the
-	 * network|site cache, please see docs for `fp transient`.
+	 * network|site cache, please see docs for `fin transient`.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp transient type
+	 *     $ fin transient type
 	 *     Transients are saved to the database.
 	 */
 	public function type() {
-		if ( fp_using_ext_object_cache() ) {
+		if ( fin_using_ext_object_cache() ) {
 			$message = 'Transients are saved to the object cache.';
 		} else {
 			$message = 'Transients are saved to the database.';
@@ -295,7 +295,7 @@ class Transient_Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # List all transients
-	 *     $ fp transient list
+	 *     $ fin transient list
 	*      +------+-------+---------------+
 	*      | name | value | expiration    |
 	*      +------+-------+---------------+
@@ -311,9 +311,9 @@ class Transient_Command extends WP_CLI_Command {
 	 * @param array{search?: string,  exclude?: string, network?: bool, unserialize?: bool, 'human-readable'?: bool, fields?: string, format?: string} $assoc_args Associative arguments.
 	 */
 	public function list_( $args, $assoc_args ) {
-		global $fpdb;
+		global $findb;
 
-		if ( fp_using_ext_object_cache() ) {
+		if ( fin_using_ext_object_cache() ) {
 			WP_CLI::warning( 'Transients are stored in an external object cache, and this command only shows those stored in the database.' );
 		}
 
@@ -349,61 +349,61 @@ class Transient_Command extends WP_CLI_Command {
 
 		if ( $network ) {
 			if ( is_multisite() ) {
-				$where  = $fpdb->prepare(
+				$where  = $findb->prepare(
 					'WHERE `meta_key` LIKE %s',
 					Utils\esc_like( '_site_transient_' ) . $pattern
 				);
-				$where .= $fpdb->prepare(
+				$where .= $findb->prepare(
 					' AND meta_key NOT LIKE %s',
 					Utils\esc_like( '_site_transient_timeout_' ) . '%'
 				);
 				if ( $exclude ) {
-					$where .= $fpdb->prepare(
+					$where .= $findb->prepare(
 						' AND meta_key NOT LIKE %s',
 						Utils\esc_like( '_site_transient_' ) . $exclude
 					);
 				}
 
-				$query = "SELECT `meta_key` as `name`, `meta_value` as `value` FROM {$fpdb->sitemeta} {$where}";
+				$query = "SELECT `meta_key` as `name`, `meta_value` as `value` FROM {$findb->sitemeta} {$where}";
 			} else {
-				$where  = $fpdb->prepare(
+				$where  = $findb->prepare(
 					'WHERE `option_name` LIKE %s',
 					Utils\esc_like( '_site_transient_' ) . $pattern
 				);
-				$where .= $fpdb->prepare(
+				$where .= $findb->prepare(
 					' AND option_name NOT LIKE %s',
 					Utils\esc_like( '_site_transient_timeout_' ) . '%'
 				);
 				if ( $exclude ) {
-					$where .= $fpdb->prepare(
+					$where .= $findb->prepare(
 						' AND option_name NOT LIKE %s',
 						Utils\esc_like( '_site_transient_' ) . $exclude
 					);
 				}
 
-				$query = "SELECT `option_name` as `name`, `option_value` as `value` FROM {$fpdb->options} {$where}";
+				$query = "SELECT `option_name` as `name`, `option_value` as `value` FROM {$findb->options} {$where}";
 			}
 		} else {
-			$where  = $fpdb->prepare(
+			$where  = $findb->prepare(
 				'WHERE `option_name` LIKE %s',
 				Utils\esc_like( '_transient_' ) . $pattern
 			);
-			$where .= $fpdb->prepare(
+			$where .= $findb->prepare(
 				' AND option_name NOT LIKE %s',
 				Utils\esc_like( '_transient_timeout_' ) . '%'
 			);
 			if ( $exclude ) {
-				$where .= $fpdb->prepare(
+				$where .= $findb->prepare(
 					' AND option_name NOT LIKE %s',
 					Utils\esc_like( '_transient_' ) . $exclude
 				);
 			}
 
-			$query = "SELECT `option_name` as `name`, `option_value` as `value` FROM {$fpdb->options} {$where}";
+			$query = "SELECT `option_name` as `name`, `option_value` as `value` FROM {$findb->options} {$where}";
 		}
 
 		// phpcs:ignore FinPress.DB.PreparedSQL.NotPrepared -- Prepared properly above.
-		$results = $fpdb->get_results( $query );
+		$results = $findb->get_results( $query );
 
 		foreach ( $results as $result ) {
 			$result->name       = str_replace( array( '_site_transient_', '_transient_' ), '', $result->name );
@@ -649,14 +649,14 @@ class Transient_Command extends WP_CLI_Command {
 	 * @param bool $network Whether to delete transients or network|site transients.
 	 */
 	private function delete_expired( $network ) {
-		global $fpdb;
+		global $findb;
 
 		$count = 0;
 
 		if ( ! $network ) {
-			$count += $fpdb->query(
-				$fpdb->prepare(
-					"DELETE a, b FROM {$fpdb->options} a, {$fpdb->options} b
+			$count += $findb->query(
+				$findb->prepare(
+					"DELETE a, b FROM {$findb->options} a, {$findb->options} b
 						WHERE a.option_name LIKE %s
 						AND a.option_name NOT LIKE %s
 						AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )
@@ -668,9 +668,9 @@ class Transient_Command extends WP_CLI_Command {
 			);
 		} elseif ( ! is_multisite() ) {
 				// Non-Multisite stores site transients in the options table.
-				$count += $fpdb->query(
-					$fpdb->prepare(
-						"DELETE a, b FROM {$fpdb->options} a, {$fpdb->options} b
+				$count += $findb->query(
+					$findb->prepare(
+						"DELETE a, b FROM {$findb->options} a, {$findb->options} b
 							WHERE a.option_name LIKE %s
 							AND a.option_name NOT LIKE %s
 							AND b.option_name = CONCAT( '_site_transient_timeout_', SUBSTRING( a.option_name, 17 ) )
@@ -682,9 +682,9 @@ class Transient_Command extends WP_CLI_Command {
 				);
 		} else {
 			// Multisite stores site transients in the sitemeta table.
-			$count += $fpdb->query(
-				$fpdb->prepare(
-					"DELETE a, b FROM {$fpdb->sitemeta} a, {$fpdb->sitemeta} b
+			$count += $findb->query(
+				$findb->prepare(
+					"DELETE a, b FROM {$findb->sitemeta} a, {$findb->sitemeta} b
 							WHERE a.meta_key LIKE %s
 							AND a.meta_key NOT LIKE %s
 							AND b.meta_key = CONCAT( '_site_transient_timeout_', SUBSTRING( a.meta_key, 17 ) )
@@ -712,7 +712,7 @@ class Transient_Command extends WP_CLI_Command {
 			WP_CLI::success( 'No expired transients found.' );
 		}
 
-		if ( fp_using_ext_object_cache() ) {
+		if ( fin_using_ext_object_cache() ) {
 			WP_CLI::warning( 'Transients are stored in an external object cache, and this command only deletes those stored in the database. You must flush the cache to delete all transients.' );
 		}
 	}
@@ -725,16 +725,16 @@ class Transient_Command extends WP_CLI_Command {
 	 * @param bool $network Whether to delete transients or network|site transients.
 	 */
 	private function delete_all( $network ) {
-		global $fpdb;
+		global $findb;
 
 		// To ensure proper count values we first delete all transients with a timeout
 		// and then the remaining transients without a timeout.
 		$count = 0;
 
 		if ( ! $network ) {
-			$deleted = $fpdb->query(
-				$fpdb->prepare(
-					"DELETE a, b FROM {$fpdb->options} a, {$fpdb->options} b
+			$deleted = $findb->query(
+				$findb->prepare(
+					"DELETE a, b FROM {$findb->options} a, {$findb->options} b
 						WHERE a.option_name LIKE %s
 						AND a.option_name NOT LIKE %s
 						AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )",
@@ -745,17 +745,17 @@ class Transient_Command extends WP_CLI_Command {
 
 			$count += $deleted / 2; // Ignore affected rows for timeouts.
 
-			$count += $fpdb->query(
-				$fpdb->prepare(
-					"DELETE FROM $fpdb->options WHERE option_name LIKE %s",
+			$count += $findb->query(
+				$findb->prepare(
+					"DELETE FROM $findb->options WHERE option_name LIKE %s",
 					Utils\esc_like( '_transient_' ) . '%'
 				)
 			);
 		} elseif ( ! is_multisite() ) {
 				// Non-Multisite stores site transients in the options table.
-				$deleted = $fpdb->query(
-					$fpdb->prepare(
-						"DELETE a, b FROM {$fpdb->options} a, {$fpdb->options} b
+				$deleted = $findb->query(
+					$findb->prepare(
+						"DELETE a, b FROM {$findb->options} a, {$findb->options} b
 							WHERE a.option_name LIKE %s
 							AND a.option_name NOT LIKE %s
 							AND b.option_name = CONCAT( '_site_transient_timeout_', SUBSTRING( a.option_name, 17 ) )",
@@ -766,17 +766,17 @@ class Transient_Command extends WP_CLI_Command {
 
 				$count += $deleted / 2; // Ignore affected rows for timeouts.
 
-				$count += $fpdb->query(
-					$fpdb->prepare(
-						"DELETE FROM $fpdb->options WHERE option_name LIKE %s",
+				$count += $findb->query(
+					$findb->prepare(
+						"DELETE FROM $findb->options WHERE option_name LIKE %s",
 						Utils\esc_like( '_site_transient_' ) . '%'
 					)
 				);
 		} else {
 			// Multisite stores site transients in the sitemeta table.
-			$deleted = $fpdb->query(
-				$fpdb->prepare(
-					"DELETE a, b FROM {$fpdb->sitemeta} a, {$fpdb->sitemeta} b
+			$deleted = $findb->query(
+				$findb->prepare(
+					"DELETE a, b FROM {$findb->sitemeta} a, {$findb->sitemeta} b
 							WHERE a.meta_key LIKE %s
 							AND a.meta_key NOT LIKE %s
 							AND b.meta_key = CONCAT( '_site_transient_timeout_', SUBSTRING( a.meta_key, 17 ) )",
@@ -787,9 +787,9 @@ class Transient_Command extends WP_CLI_Command {
 
 			$count += $deleted / 2; // Ignore affected rows for timeouts.
 
-			$count += $fpdb->query(
-				$fpdb->prepare(
-					"DELETE FROM $fpdb->sitemeta WHERE meta_key LIKE %s",
+			$count += $findb->query(
+				$findb->prepare(
+					"DELETE FROM $findb->sitemeta WHERE meta_key LIKE %s",
 					Utils\esc_like( '_site_transient_' ) . '%'
 				)
 			);
@@ -807,7 +807,7 @@ class Transient_Command extends WP_CLI_Command {
 			WP_CLI::success( 'No transients found.' );
 		}
 
-		if ( fp_using_ext_object_cache() ) {
+		if ( fin_using_ext_object_cache() ) {
 			WP_CLI::warning( 'Transients are stored in an external object cache, and this command only deletes those stored in the database. You must flush the cache to delete all transients.' );
 		}
 	}

@@ -1,9 +1,9 @@
-fp-cli/cache-command
+fin-cli/cache-command
 ====================
 
 Manages object and transient caches.
 
-[![Testing](https://github.com/fp-cli/cache-command/actions/workflows/testing.yml/badge.svg)](https://github.com/fp-cli/cache-command/actions/workflows/testing.yml)
+[![Testing](https://github.com/fin-cli/cache-command/actions/workflows/testing.yml/badge.svg)](https://github.com/fin-cli/cache-command/actions/workflows/testing.yml)
 
 Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
 
@@ -11,12 +11,12 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 
 This package implements the following commands:
 
-### fp cache
+### fin cache
 
 Adds, removes, fetches, and flushes the WP Object Cache object.
 
 ~~~
-fp cache
+fin cache
 ~~~
 
 By default, the WP Object Cache exists in PHP memory for the length of the
@@ -29,21 +29,21 @@ for more detail.
 **EXAMPLES**
 
     # Set cache.
-    $ fp cache set my_key my_value my_group 300
+    $ fin cache set my_key my_value my_group 300
     Success: Set object 'my_key' in group 'my_group'.
 
     # Get cache.
-    $ fp cache get my_key my_group
+    $ fin cache get my_key my_group
     my_value
 
 
 
-### fp cache add
+### fin cache add
 
 Adds a value to the object cache.
 
 ~~~
-fp cache add <key> <value> [<group>] [<expiration>]
+fin cache add <key> <value> [<group>] [<expiration>]
 ~~~
 
 Errors if a value already exists for the key, which means the value can't
@@ -72,17 +72,17 @@ be added.
 **EXAMPLES**
 
     # Add cache.
-    $ fp cache add my_key my_group my_value 300
+    $ fin cache add my_key my_group my_value 300
     Success: Added object 'my_key' in group 'my_value'.
 
 
 
-### fp cache decr
+### fin cache decr
 
 Decrements a value in the object cache.
 
 ~~~
-fp cache decr <key> [<offset>] [<group>]
+fin cache decr <key> [<offset>] [<group>]
 ~~~
 
 Errors if the value can't be decremented.
@@ -107,17 +107,17 @@ Errors if the value can't be decremented.
 **EXAMPLES**
 
     # Decrease cache value.
-    $ fp cache decr my_key 2 my_group
+    $ fin cache decr my_key 2 my_group
     48
 
 
 
-### fp cache delete
+### fin cache delete
 
 Removes a value from the object cache.
 
 ~~~
-fp cache delete <key> [<group>]
+fin cache delete <key> [<group>]
 ~~~
 
 Errors if the value can't be deleted.
@@ -136,17 +136,17 @@ Errors if the value can't be deleted.
 **EXAMPLES**
 
     # Delete cache.
-    $ fp cache delete my_key my_group
+    $ fin cache delete my_key my_group
     Success: Object deleted.
 
 
 
-### fp cache flush
+### fin cache flush
 
 Flushes the object cache.
 
 ~~~
-fp cache flush 
+fin cache flush 
 ~~~
 
 For FinPress multisite instances using a persistent object cache,
@@ -159,17 +159,17 @@ Errors if the object cache can't be flushed.
 **EXAMPLES**
 
     # Flush cache.
-    $ fp cache flush
+    $ fin cache flush
     Success: The cache was flushed.
 
 
 
-### fp cache flush-group
+### fin cache flush-group
 
 Removes all cache items in a group, if the object cache implementation supports it.
 
 ~~~
-fp cache flush-group <group>
+fin cache flush-group <group>
 ~~~
 
 **OPTIONS**
@@ -180,17 +180,17 @@ fp cache flush-group <group>
 **EXAMPLES**
 
     # Clear cache group.
-    $ fp cache flush-group my_group
+    $ fin cache flush-group my_group
     Success: Cache group 'my_group' was flushed.
 
 
 
-### fp cache get
+### fin cache get
 
 Gets a value from the object cache.
 
 ~~~
-fp cache get <key> [<group>]
+fin cache get <key> [<group>]
 ~~~
 
 Errors if the value doesn't exist.
@@ -209,17 +209,17 @@ Errors if the value doesn't exist.
 **EXAMPLES**
 
     # Get cache.
-    $ fp cache get my_key my_group
+    $ fin cache get my_key my_group
     my_value
 
 
 
-### fp cache incr
+### fin cache incr
 
 Increments a value in the object cache.
 
 ~~~
-fp cache incr <key> [<offset>] [<group>]
+fin cache incr <key> [<offset>] [<group>]
 ~~~
 
 Errors if the value can't be incremented.
@@ -244,17 +244,17 @@ Errors if the value can't be incremented.
 **EXAMPLES**
 
     # Increase cache value.
-    $ fp cache incr my_key 2 my_group
+    $ fin cache incr my_key 2 my_group
     50
 
 
 
-### fp cache patch
+### fin cache patch
 
 Update a nested value from the cache.
 
 ~~~
-fp cache patch <action> <key> <key-path>... [<value>] [--group=<group>] [--format=<format>]
+fin cache patch <action> <key> <key-path>... [<value>] [--group=<group>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -300,12 +300,12 @@ fp cache patch <action> <key> <key-path>... [<value>] [--group=<group>] [--forma
 
 
 
-### fp cache pluck
+### fin cache pluck
 
 Get a nested value from the cache.
 
 ~~~
-fp cache pluck <key> <key-path>... [--group=<group>] [--format=<format>]
+fin cache pluck <key> <key-path>... [--group=<group>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -334,12 +334,12 @@ fp cache pluck <key> <key-path>... [--group=<group>] [--format=<format>]
 
 
 
-### fp cache replace
+### fin cache replace
 
 Replaces a value in the object cache, if the value already exists.
 
 ~~~
-fp cache replace <key> <value> [<group>] [<expiration>]
+fin cache replace <key> <value> [<group>] [<expiration>]
 ~~~
 
 Errors if the value can't be replaced.
@@ -367,17 +367,17 @@ Errors if the value can't be replaced.
 **EXAMPLES**
 
     # Replace cache.
-    $ fp cache replace my_key new_value my_group
+    $ fin cache replace my_key new_value my_group
     Success: Replaced object 'my_key' in group 'my_group'.
 
 
 
-### fp cache set
+### fin cache set
 
 Sets a value to the object cache, regardless of whether it already exists.
 
 ~~~
-fp cache set <key> <value> [<group>] [<expiration>]
+fin cache set <key> <value> [<group>] [<expiration>]
 ~~~
 
 Errors if the value can't be set.
@@ -405,17 +405,17 @@ Errors if the value can't be set.
 **EXAMPLES**
 
     # Set cache.
-    $ fp cache set my_key my_value my_group 300
+    $ fin cache set my_key my_value my_group 300
     Success: Set object 'my_key' in group 'my_group'.
 
 
 
-### fp cache supports
+### fin cache supports
 
 Determines whether the object cache implementation supports a particular feature.
 
 ~~~
-fp cache supports <feature>
+fin cache supports <feature>
 ~~~
 
 **OPTIONS**
@@ -426,23 +426,23 @@ fp cache supports <feature>
 **EXAMPLES**
 
     # Check whether is add_multiple supported.
-    $ fp cache supports add_multiple
+    $ fin cache supports add_multiple
     $ echo $?
     0
 
     # Bash script for checking whether for support like this:
-    if ! fp cache supports non_existing; then
+    if ! fin cache supports non_existing; then
         echo 'non_existing is not supported'
     fi
 
 
 
-### fp cache type
+### fin cache type
 
 Attempts to determine which object cache is being used.
 
 ~~~
-fp cache type 
+fin cache type 
 ~~~
 
 Note that the guesses made by this function are based on the
@@ -453,23 +453,23 @@ ability to determine which object cache is being used.
 **EXAMPLES**
 
     # Check cache type.
-    $ fp cache type
+    $ fin cache type
     Default
 
 
 
-### fp transient
+### fin transient
 
 Adds, gets, and deletes entries in the FinPress Transient Cache.
 
 ~~~
-fp transient
+fin transient
 ~~~
 
 By default, the transient cache uses the FinPress database to persist values
 between requests. On a single site installation, values are stored in the
-`fp_options` table. On a multisite installation, values are stored in the
-`fp_options` or the `fp_sitemeta` table, depending on use of the `--network`
+`fin_options` table. On a multisite installation, values are stored in the
+`fin_options` or the `fin_sitemeta` table, depending on use of the `--network`
 flag.
 
 When a persistent object cache drop-in is installed (e.g. Redis or Memcached),
@@ -478,41 +478,41 @@ the transient cache skips the database and simply wraps the WP Object Cache.
 **EXAMPLES**
 
     # Set transient.
-    $ fp transient set sample_key "test data" 3600
+    $ fin transient set sample_key "test data" 3600
     Success: Transient added.
 
     # Get transient.
-    $ fp transient get sample_key
+    $ fin transient get sample_key
     test data
 
     # Delete transient.
-    $ fp transient delete sample_key
+    $ fin transient delete sample_key
     Success: Transient deleted.
 
     # Delete expired transients.
-    $ fp transient delete --expired
+    $ fin transient delete --expired
     Success: 12 expired transients deleted from the database.
 
     # Delete all transients.
-    $ fp transient delete --all
+    $ fin transient delete --all
     Success: 14 transients deleted from the database.
 
     # Delete all site transients.
-    $ fp transient delete --all --network
+    $ fin transient delete --all --network
     Success: 2 transients deleted from the database.
 
 
 
-### fp transient delete
+### fin transient delete
 
 Deletes a transient value.
 
 ~~~
-fp transient delete [<key>] [--network] [--all] [--expired]
+fin transient delete [<key>] [--network] [--all] [--expired]
 ~~~
 
 For a more complete explanation of the transient cache, including the
-network|site cache, please see docs for `fp transient`.
+network|site cache, please see docs for `fin transient`.
 
 **OPTIONS**
 
@@ -533,40 +533,40 @@ network|site cache, please see docs for `fp transient`.
 **EXAMPLES**
 
     # Delete transient.
-    $ fp transient delete sample_key
+    $ fin transient delete sample_key
     Success: Transient deleted.
 
     # Delete expired transients.
-    $ fp transient delete --expired
+    $ fin transient delete --expired
     Success: 12 expired transients deleted from the database.
 
     # Delete expired site transients.
-    $ fp transient delete --expired --network
+    $ fin transient delete --expired --network
     Success: 1 expired transient deleted from the database.
 
     # Delete all transients.
-    $ fp transient delete --all
+    $ fin transient delete --all
     Success: 14 transients deleted from the database.
 
     # Delete all site transients.
-    $ fp transient delete --all --network
+    $ fin transient delete --all --network
     Success: 2 transients deleted from the database.
 
     # Delete all transients in a multisite.
-    $ fp transient delete --all --network && fp site list --field=url | xargs -n1 -I % fp --url=% transient delete --all
+    $ fin transient delete --all --network && fin site list --field=url | xargs -n1 -I % fin --url=% transient delete --all
 
 
 
-### fp transient get
+### fin transient get
 
 Gets a transient value.
 
 ~~~
-fp transient get <key> [--format=<format>] [--network]
+fin transient get <key> [--format=<format>] [--network]
 ~~~
 
 For a more complete explanation of the transient cache, including the
-network|site cache, please see docs for `fp transient`.
+network|site cache, please see docs for `fin transient`.
 
 **OPTIONS**
 
@@ -591,20 +591,20 @@ network|site cache, please see docs for `fp transient`.
 
 **EXAMPLES**
 
-    $ fp transient get sample_key
+    $ fin transient get sample_key
     test data
 
-    $ fp transient get random_key
+    $ fin transient get random_key
     Warning: Transient with key "random_key" is not set.
 
 
 
-### fp transient list
+### fin transient list
 
 Lists transients and their values.
 
 ~~~
-fp transient list [--search=<pattern>] [--exclude=<pattern>] [--network] [--unserialize] [--human-readable] [--fields=<fields>] [--format=<format>]
+fin transient list [--search=<pattern>] [--exclude=<pattern>] [--network] [--unserialize] [--human-readable] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -652,7 +652,7 @@ This field will be displayed by default for each matching option:
 **EXAMPLES**
 
     # List all transients
-    $ fp transient list
+    $ fin transient list
      +------+-------+---------------+
      | name | value | expiration    |
      +------+-------+---------------+
@@ -664,12 +664,12 @@ This field will be displayed by default for each matching option:
 
 
 
-### fp transient patch
+### fin transient patch
 
 Update a nested value from a transient.
 
 ~~~
-fp transient patch <action> <key> <key-path>... [<value>] [--format=<format>] [--expiration=<expiration>] [--network]
+fin transient patch <action> <key> <key-path>... [<value>] [--format=<format>] [--expiration=<expiration>] [--network]
 ~~~
 
 **OPTIONS**
@@ -711,12 +711,12 @@ fp transient patch <action> <key> <key-path>... [<value>] [--format=<format>] [-
 
 
 
-### fp transient pluck
+### fin transient pluck
 
 Get a nested value from a transient.
 
 ~~~
-fp transient pluck <key> <key-path>... [--format=<format>] [--network]
+fin transient pluck <key> <key-path>... [--format=<format>] [--network]
 ~~~
 
 **OPTIONS**
@@ -744,18 +744,18 @@ fp transient pluck <key> <key-path>... [--format=<format>] [--network]
 
 
 
-### fp transient set
+### fin transient set
 
 Sets a transient value.
 
 ~~~
-fp transient set <key> <value> [<expiration>] [--network]
+fin transient set <key> <value> [<expiration>] [--network]
 ~~~
 
 `<expiration>` is the time until expiration, in seconds.
 
 For a more complete explanation of the transient cache, including the
-network|site cache, please see docs for `fp transient`.
+network|site cache, please see docs for `fin transient`.
 
 **OPTIONS**
 
@@ -775,28 +775,28 @@ network|site cache, please see docs for `fp transient`.
 
 **EXAMPLES**
 
-    $ fp transient set sample_key "test data" 3600
+    $ fin transient set sample_key "test data" 3600
     Success: Transient added.
 
 
 
-### fp transient type
+### fin transient type
 
 Determines the type of transients implementation.
 
 ~~~
-fp transient type 
+fin transient type 
 ~~~
 
 Indicates whether the transients API is using an object cache or the
 database.
 
 For a more complete explanation of the transient cache, including the
-network|site cache, please see docs for `fp transient`.
+network|site cache, please see docs for `fin transient`.
 
 **EXAMPLES**
 
-    $ fp transient type
+    $ fin transient type
     Transients are saved to the database.
 
 ## Installing
@@ -805,7 +805,7 @@ This package is included with WP-CLI itself, no additional installation necessar
 
 To install the latest version of this package over what's included in WP-CLI, run:
 
-    fp package install git@github.com:fp-cli/cache-command.git
+    fin package install git@github.com:fin-cli/cache-command.git
 
 ## Contributing
 
@@ -819,19 +819,19 @@ For a more thorough introduction, [check out WP-CLI's guide to contributing](htt
 
 Think you’ve found a bug? We’d love for you to help us get it fixed.
 
-Before you create a new issue, you should [search existing issues](https://github.com/fp-cli/cache-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
+Before you create a new issue, you should [search existing issues](https://github.com/fin-cli/cache-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
 
-Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/fp-cli/cache-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.finpress.org/cli/handbook/bug-reports/).
+Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/fin-cli/cache-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.finpress.org/cli/handbook/bug-reports/).
 
 ### Creating a pull request
 
-Want to contribute a new feature? Please first [open a new issue](https://github.com/fp-cli/cache-command/issues/new) to discuss whether the feature is a good fit for the project.
+Want to contribute a new feature? Please first [open a new issue](https://github.com/fin-cli/cache-command/issues/new) to discuss whether the feature is a good fit for the project.
 
 Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.finpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.finpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
 
 ## Support
 
-GitHub issues aren't for general support questions, but there are other venues you can try: https://fp-cli.org/#support
+GitHub issues aren't for general support questions, but there are other venues you can try: https://fin-cli.org/#support
 
 
-*This README.md is generated dynamically from the project's codebase using `fp scaffold package-readme` ([doc](https://github.com/fp-cli/scaffold-package-command#fp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
+*This README.md is generated dynamically from the project's codebase using `fin scaffold package-readme` ([doc](https://github.com/fin-cli/scaffold-package-command#fin-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
